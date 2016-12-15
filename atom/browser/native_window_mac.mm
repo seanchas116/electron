@@ -602,6 +602,8 @@ struct Converter<atom::NativeWindowMac::TitleBarStyle> {
     } else if (title_bar_style == "hidden-inset" ||  // Deprecate this after 2.0
                title_bar_style == "hiddenInset") {
       *out = atom::NativeWindowMac::HIDDEN_INSET;
+    } else if (title_bar_style == "transparent") {
+      *out = atom::NativeWindowMac::TRANSPARENT;
     } else {
       return false;
     }
@@ -665,9 +667,12 @@ NativeWindowMac::NativeWindowMac(
   if (closable) {
     styleMask |= NSClosableWindowMask;
   }
-  if (title_bar_style_ != NORMAL) {
+  if (IsTitleBarHidden()) {
     // The window without titlebar is treated the same with frameless window.
     set_has_frame(false);
+  }
+  if (title_bar_style_ == TRANSPARENT) {
+    styleMask |= NSFullSizeContentViewWindowMask;
   }
   if (!useStandardWindow || transparent() || !has_frame()) {
     styleMask |= NSTexturedBackgroundWindowMask;
@@ -734,6 +739,10 @@ NativeWindowMac::NativeWindowMac(
       [window_ enableWindowButtonsOffset];
       [window_ setWindowButtonsOffset:NSMakePoint(12, 10)];
     }
+  }
+
+  if (title_bar_style_ == TRANSPARENT) {
+    [window_ setTitlebarAppearsTransparent:YES];
   }
 
   // On macOS the initial window size doesn't include window frame.
@@ -1429,7 +1438,7 @@ void NativeWindowMac::InstallView() {
     // The fullscreen button should always be hidden for frameless window.
     [[window_ standardWindowButton:NSWindowFullScreenButton] setHidden:YES];
 
-    if (title_bar_style_ != NORMAL) {
+    if (IsTitleBarHidden()) {
       if (base::mac::IsOSMavericks()) {
         ShowWindowButton(NSWindowZoomButton);
         ShowWindowButton(NSWindowMiniaturizeButton);

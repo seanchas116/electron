@@ -119,8 +119,12 @@ class NativeWindowMac : public NativeWindow,
     NORMAL,
     HIDDEN,
     HIDDEN_INSET,
+    TRANSPARENT,
   };
   TitleBarStyle title_bar_style() const { return title_bar_style_; }
+  bool IsTitleBarHidden() const {
+    return title_bar_style_ == HIDDEN || title_bar_style_ == HIDDEN_INSET;
+  }
 
   bool zoom_to_page_width() const { return zoom_to_page_width_; }
 
