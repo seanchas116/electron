@@ -62,8 +62,9 @@ describe('clipboard module', function () {
 
   describe('clipboard.readCustom', () => {
     it('returns custom data correctly', () => {
-      const p = path.join(fixtures, 'assets', 'logo.png')
-      const customData = fs.readFileSync(p)
+      //const p = path.join(fixtures, 'assets', 'logo.png')
+      //const customData = fs.readFileSync(p)
+      const customData = Buffer.from([12, 34, 56])
       clipboard.writeCustom('myData', customData)
       assert.deepEqual(clipboard.readCustom('myData'), customData)
     })

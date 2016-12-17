@@ -48,8 +48,8 @@ class Clipboard {
   static base::string16 ReadFindText();
   static void WriteFindText(const base::string16& text);
 
-  static v8::Local<v8::Value> ReadCustom(const base::string16& type, mate::Arguments* args);
-  static void WriteCustom(const std::string& type, v8::Local<v8::Value> buffer, mate::Arguments* args);
+  static v8::Local<v8::Value> ReadCustom(const std::string& format_string, mate::Arguments* args);
+  static void WriteCustom(const std::string& format_string, v8::Local<v8::Value> buffer, mate::Arguments* args);
 
  private:
   DISALLOW_COPY_AND_ASSIGN(Clipboard);

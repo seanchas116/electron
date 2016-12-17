@@ -156,10 +156,10 @@ void Clipboard::WriteFindText(const base::string16& text) {}
 base::string16 Clipboard::ReadFindText() { return base::string16(); }
 #endif
 
-v8::Local<v8::Value> Clipboard::ReadCustom(const base::string16& format_string, mate::Arguments* args) {
+v8::Local<v8::Value> Clipboard::ReadCustom(const std::string& format_string, mate::Arguments* args) {
   auto clipboard = ui::Clipboard::GetForCurrentThread();
-  base::string16 data;
-  clipboard->ReadCustomData(GetClipboardType(args), format_string, &data);
+  std::string data;
+  clipboard->ReadData(ui::Clipboard::GetFormatType(format_string), &data);
   return node::Buffer::Copy(args->isolate(),
                             reinterpret_cast<const char*>(data.data()),
                             static_cast<size_t>(data.size())).ToLocalChecked();
@@ -168,7 +168,8 @@ v8::Local<v8::Value> Clipboard::ReadCustom(const base::string16& format_string, 
 void Clipboard::WriteCustom(const std::string& format_string, v8::Local<v8::Value> buffer, mate::Arguments* args) {
   ui::ScopedClipboardWriter writer(GetClipboardType(args));
   ui::Clipboard::FormatType format(ui::Clipboard::GetFormatType(format_string));
-  base::Pickle pickle(node::Buffer::Data(buffer), node::Buffer::Length(buffer));
+  base::Pickle pickle;
+  pickle.WriteBytes(node::Buffer::Data(buffer), node::Buffer::Length(buffer));
   writer.WritePickledData(pickle, format);
 }
 
