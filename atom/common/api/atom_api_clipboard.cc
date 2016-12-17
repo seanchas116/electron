@@ -6,6 +6,7 @@
 
 #include "atom/common/native_mate_converters/image_converter.h"
 #include "atom/common/native_mate_converters/string16_converter.h"
+#include "base/pickle.h"
 #include "base/strings/utf_string_conversions.h"
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
 
@@ -155,6 +156,22 @@ void Clipboard::WriteFindText(const base::string16& text) {}
 base::string16 Clipboard::ReadFindText() { return base::string16(); }
 #endif
 
+v8::Local<v8::Value> Clipboard::ReadCustom(const base::string16& format_string, mate::Arguments* args) {
+  auto clipboard = ui::Clipboard::GetForCurrentThread();
+  base::string16 data;
+  clipboard->ReadCustomData(GetClipboardType(args), format_string, &data);
+  return node::Buffer::Copy(args->isolate(),
+                            reinterpret_cast<const char*>(data.data()),
+                            static_cast<size_t>(data.size())).ToLocalChecked();
+}
+
+void Clipboard::WriteCustom(const std::string& format_string, v8::Local<v8::Value> buffer, mate::Arguments* args) {
+  ui::ScopedClipboardWriter writer(GetClipboardType(args));
+  ui::Clipboard::FormatType format(ui::Clipboard::GetFormatType(format_string));
+  base::Pickle pickle(node::Buffer::Data(buffer), node::Buffer::Length(buffer));
+  writer.WritePickledData(pickle, format);
+}
+
 void Clipboard::Clear(mate::Arguments* args) {
   ui::Clipboard::GetForCurrentThread()->Clear(GetClipboardType(args));
 }
@@ -184,6 +201,8 @@ void Initialize(v8::Local<v8::Object> exports, v8::Local<v8::Value> unused,
   dict.SetMethod("writeImage", &atom::api::Clipboard::WriteImage);
   dict.SetMethod("readFindText", &atom::api::Clipboard::ReadFindText);
   dict.SetMethod("writeFindText", &atom::api::Clipboard::WriteFindText);
+  dict.SetMethod("readCustom", &atom::api::Clipboard::ReadCustom);
+  dict.SetMethod("writeCustom", &atom::api::Clipboard::WriteCustom);
   dict.SetMethod("clear", &atom::api::Clipboard::Clear);
 
   // TODO(kevinsawicki): Remove in 2.0, deprecate before then with warnings
