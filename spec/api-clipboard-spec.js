@@ -1,5 +1,6 @@
 const assert = require('assert')
 const path = require('path')
+const fs = require('fs')
 
 const clipboard = require('electron').clipboard
 const nativeImage = require('electron').nativeImage
@@ -59,6 +60,15 @@ describe('clipboard module', function () {
     })
   })
 
+  describe('clipboard.readCustom', () => {
+    it('returns custom data correctly', () => {
+      const p = path.join(fixtures, 'assets', 'logo.png')
+      const customData = fs.readFileSync(p)
+      clipboard.writeCustom('myData', customData)
+      assert.deepEqual(clipboard.readCustom('myData'), customData)
+    })
+  })
+
   describe('clipboard.write()', function () {
     it('returns data correctly', function () {
       var text = 'test'
@@ -67,17 +77,25 @@ describe('clipboard module', function () {
       var i = nativeImage.createFromPath(p)
       var markup = process.platform === 'darwin' ? "<meta charset='utf-8'><b>Hi</b>" : process.platform === 'linux' ? '<meta http-equiv="content-type" ' + 'content="text/html; charset=utf-8"><b>Hi</b>' : '<b>Hi</b>'
       var bookmark = {title: 'a title', url: 'test'}
+      const customText = Buffer.from('千江有水千江月，万里无云万里天', 'utf8')
+      const customData = fs.readFileSync(p)
       clipboard.write({
         text: 'test',
         html: '<b>Hi</b>',
         rtf: '{\\rtf1\\utf8 text}',
         bookmark: 'a title',
-        image: p
+        image: p,
+        custom: {
+          'myText': Buffer.from(customText),
+          'myData': customData
+        }
       })
       assert.equal(clipboard.readText(), text)
       assert.equal(clipboard.readHTML(), markup)
       assert.equal(clipboard.readRTF(), rtf)
       assert.equal(clipboard.readImage().toDataURL(), i.toDataURL())
+      assert.equal(clipboard.readCustom('myText').toString(), customText)
+      assert.deepEqual(clipboard.readCustom('myData'), customData)
 
       if (process.platform !== 'linux') {
         assert.deepEqual(clipboard.readBookmark(), bookmark)
