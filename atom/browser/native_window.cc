@@ -196,6 +196,11 @@ void NativeWindow::InitFromOptions(const mate::Dictionary& options) {
   options.Get(options::kTitle, &title);
   SetTitle(title);
 
+  std::string title_color;
+  if (options.Get(options::kTitleColor, &title_color)) {
+    SetTitleColor(title_color);
+  }
+
   // Then show it.
   bool show = true;
   options.Get(options::kShow, &show);
@@ -307,6 +312,9 @@ double NativeWindow::GetSheetOffsetX() {
 
 double NativeWindow::GetSheetOffsetY() {
   return sheet_offset_y_;
+}
+
+void NativeWindow::SetTitleColor(const std::string& color) {
 }
 
 void NativeWindow::SetRepresentedFilename(const std::string& filename) {

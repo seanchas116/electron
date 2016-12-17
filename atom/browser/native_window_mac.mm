@@ -1110,6 +1110,41 @@ std::string NativeWindowMac::GetTitle() {
   return base::SysNSStringToUTF8([window_ title]);;
 }
 
+namespace {
+
+NSTextField* FindTextField(NSView* view) {
+  for (NSView* subview in view.subviews) {
+    if ([subview isKindOfClass:[NSTextField class]]) {
+      return (NSTextField *)subview;
+    } else {
+      NSTextField* result = FindTextField(subview);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return nullptr;
+}
+
+}
+
+void NativeWindowMac::SetTitleColor(const std::string& color_name) {
+  printf("%s\n", color_name.c_str());
+  SkColor color = ParseHexColor(color_name);
+  base::ScopedCFTypeRef<CGColorRef> cgcolor(
+      skia::CGColorCreateFromSkColor(color));
+  NSTextField* titleField = FindTextField([window_ contentView].superview);
+  printf("%p\n", titleField);
+  if (titleField) {
+    auto attributedStr = [[NSAttributedString alloc] initWithString:@"This is a" attributes:@{
+      NSForegroundColorAttributeName: [NSColor colorWithCGColor:cgcolor]
+    }];
+    titleField.attributedStringValue = attributedStr;
+
+    //[titleField setTextColor:[NSColor colorWithCGColor:cgcolor]];
+  }
+}
+
 void NativeWindowMac::FlashFrame(bool flash) {
   if (flash) {
     attention_request_id_ = [NSApp requestUserAttention:NSInformationalRequest];

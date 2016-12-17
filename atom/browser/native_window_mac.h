@@ -72,6 +72,7 @@ class NativeWindowMac : public NativeWindow,
   void Center() override;
   void SetTitle(const std::string& title) override;
   std::string GetTitle() override;
+  void SetTitleColor(const std::string& color_name) override;
   void FlashFrame(bool flash) override;
   void SetSkipTaskbar(bool skip) override;
   void SetKiosk(bool kiosk) override;

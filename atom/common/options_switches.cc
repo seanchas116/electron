@@ -51,6 +51,9 @@ const char kZoomToPageWidth[] = "zoomToPageWidth";
 // The requested title bar style for the window
 const char kTitleBarStyle[] = "titleBarStyle";
 
+// Window title color
+const char kTitleColor[] = "titleColor";
+
 // The menu bar is hidden unless "Alt" is pressed.
 const char kAutoHideMenuBar[] = "autoHideMenuBar";
 

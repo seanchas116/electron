@@ -143,6 +143,7 @@ class Window : public mate::TrackableObject<Window>,
   std::vector<int> GetPosition();
   void SetTitle(const std::string& title);
   std::string GetTitle();
+  void SetTitleColor(const std::string& color_name);
   void FlashFrame(bool flash);
   void SetSkipTaskbar(bool skip);
   void SetKiosk(bool kiosk);

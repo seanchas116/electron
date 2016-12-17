@@ -537,6 +537,10 @@ std::string Window::GetTitle() {
   return window_->GetTitle();
 }
 
+void Window::SetTitleColor(const std::string& color_name) {
+  window_->SetTitleColor(color_name);
+}
+
 void Window::FlashFrame(bool flash) {
   window_->FlashFrame(flash);
 }
@@ -909,6 +913,7 @@ void Window::BuildPrototype(v8::Isolate* isolate,
       .SetMethod("getPosition", &Window::GetPosition)
       .SetMethod("setTitle", &Window::SetTitle)
       .SetMethod("getTitle", &Window::GetTitle)
+      .SetMethod("setTitleColor", &Window::SetTitleColor)
       .SetMethod("flashFrame", &Window::FlashFrame)
       .SetMethod("setSkipTaskbar", &Window::SetSkipTaskbar)
       .SetMethod("setKiosk", &Window::SetKiosk)
