@@ -90,6 +90,8 @@ bool AtomBrowserClient::ShouldCreateNewSiteInstance(
     content::BrowserContext* browser_context,
     content::SiteInstance* current_instance,
     const GURL& url) {
+  
+  return false;
 
   if (url.SchemeIs(url::kJavaScriptScheme))
     // "javacript:" scheme should always use same SiteInstance
@@ -309,6 +311,9 @@ bool AtomBrowserClient::CanCreateWindow(
     int opener_render_frame_id,
     bool* no_javascript_access) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
+
+  *no_javascript_access = false;
+  return true;
 
   if (IsRendererSandboxed(render_process_id)) {
     *no_javascript_access = false;
