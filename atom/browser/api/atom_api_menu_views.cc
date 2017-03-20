@@ -42,8 +42,10 @@ void MenuViews::PopupAt(
   }
 
   int flags = MenuRunner::CONTEXT_MENU | MenuRunner::HAS_MNEMONICS;
-  if (async)
+  if (async) {
     flags |= MenuRunner::ASYNC;
+    flags |= MenuRunner::FOR_DROP;
+  }
 
   // Don't emit unresponsive event when showing menu.
   atom::UnresponsiveSuppressor suppressor;
