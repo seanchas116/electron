@@ -240,7 +240,27 @@ describe('menu module', function () {
         menu.closePopup(w)
       })
     })
+     describe('when called with nonBlocking: true', () => {
+      it('does not block event loop', done => {
+        w = new BrowserWindow({show: false, width: 200, height: 200})
+        const menu = Menu.buildFromTemplate([
+          {
+            label: '1'
+          }, {
+            label: '2'
+          }, {
+            label: '3'
+          }
+        ])
+        setTimeout(() => {
+          menu.closePopup(remote.getCurrentWindow())
+          done()
+        }, 100)
+        menu.popup(remote.getCurrentWindow(), {x: 100, y: 100, nonBlocking: true})
+      })
+    })
   })
+
   describe('MenuItem.click', function () {
     it('should be called with the item object passed', function (done) {
       var menu = Menu.buildFromTemplate([
