@@ -28,7 +28,7 @@ MenuMac::MenuMac(v8::Isolate* isolate, v8::Local<v8::Object> wrapper)
 }
 
 void MenuMac::PopupAt(
-    Window* window, int x, int y, int positioning_item, bool async) {
+    Window* window, int x, int y, int positioning_item, bool async, bool for_drop) {
   NativeWindow* native_window = window->window();
   if (!native_window)
     return;

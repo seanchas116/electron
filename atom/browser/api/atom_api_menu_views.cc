@@ -21,7 +21,7 @@ MenuViews::MenuViews(v8::Isolate* isolate, v8::Local<v8::Object> wrapper)
 }
 
 void MenuViews::PopupAt(
-    Window* window, int x, int y, int positioning_item, bool async) {
+    Window* window, int x, int y, int positioning_item, bool async, bool for_drop) {
   NativeWindow* native_window = static_cast<NativeWindow*>(window->window());
   if (!native_window)
     return;
@@ -44,6 +44,8 @@ void MenuViews::PopupAt(
   int flags = MenuRunner::CONTEXT_MENU | MenuRunner::HAS_MNEMONICS;
   if (async)
     flags |= MenuRunner::ASYNC;
+  if (for_drop)
+    flags |= MenuRunner::FOR_DROP;
 
   // Don't emit unresponsive event when showing menu.
   atom::UnresponsiveSuppressor suppressor;
